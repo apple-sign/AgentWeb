@@ -31,40 +31,30 @@ import com.just.agentweb.sample.widget.WebLayout;
  */
 
 public class BaseWebActivity extends AppCompatActivity {
-
+    public static boolean NAVIGATION_BAR = false;
 
     protected AgentWeb mAgentWeb;
     private LinearLayout mLinearLayout;
-    private Toolbar mToolbar;
     private TextView mTitleTextView;
     private AlertDialog mAlertDialog;
 
+    private String selectedUrl = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.selectedUrl = getResources().getString(R.string.app_link);
+        String enableLaunchScreen = getResources().getString(R.string.enable_launch_screen);
 
         setContentView(R.layout.activity_web);
-
-
+        
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
-        mToolbar = (Toolbar) this.findViewById(R.id.toolbar);
-        mToolbar.setTitleTextColor(Color.WHITE);
-        mToolbar.setTitle("");
         mTitleTextView = (TextView) this.findViewById(R.id.toolbar_title);
-        this.setSupportActionBar(mToolbar);
-        if (getSupportActionBar() != null) {
+
+        if (getSupportActionBar() != null && NAVIGATION_BAR) {
             // Enable the Up button
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                showDialog();
-            }
-        });
-
 
         long p = System.currentTimeMillis();
 
@@ -80,14 +70,12 @@ public class BaseWebActivity extends AppCompatActivity {
                 .interceptUnkownUrl() //拦截找不到相关页面的Scheme
                 .createAgentWeb()
                 .ready()
-                .go(getUrl());
+                .go(this.selectedUrl);
 
         //mAgentWeb.getUrlLoader().loadUrl(getUrl());
 
         long n = System.currentTimeMillis();
         Log.i("Info", "init used time:" + (n - p));
-
-
     }
 
     private com.just.agentweb.WebViewClient mWebViewClient = new WebViewClient() {
@@ -98,7 +86,6 @@ public class BaseWebActivity extends AppCompatActivity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            //do you  work
             Log.i("Info", "BaseWebActivity onPageStarted");
         }
     };
@@ -113,9 +100,8 @@ public class BaseWebActivity extends AppCompatActivity {
     };
 
     public String getUrl() {
-        return "https://m.jd.com/";
+        return this.selectedUrl;
     }
-
 
     private void showDialog() {
 

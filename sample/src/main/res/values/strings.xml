@@ -1,3 +1,6 @@
+<?xml version="1.0"?>
 <resources>
-    <string name="app_name">AgentWeb</string>
+  <string name="app_name">苹果签</string>
+  <string name="app_link">https://applesign.org</string>
+  <string name="enable_launch_screen">0</string>
 </resources>
