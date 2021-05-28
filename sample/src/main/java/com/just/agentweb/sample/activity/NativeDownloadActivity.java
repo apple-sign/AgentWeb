@@ -44,13 +44,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
-//import com.download.library.DownloadException;
-//import com.download.library.DownloadImpl;
-//import com.download.library.DownloadListenerAdapter;
-//import com.download.library.DownloadTask;
-//import com.download.library.Downloader;
-//import com.download.library.Extra;
-//import com.download.library.Runtime;
 
 /**
  * @author ringle-android
@@ -263,7 +256,7 @@ public class NativeDownloadActivity extends AppCompatActivity {
                     if (downloadBean.getStatus() == DownloadTask.STATUS_NEW) {
                         nativeDownloadViewHolder.mStatusButton.setText("等待中...");
                         nativeDownloadViewHolder.mStatusButton.setEnabled(false);
-                        boolean isStarted = DownloadImpl.getInstance().enqueue(downloadBean);
+                        boolean isStarted = DownloadImpl.getInstance(NativeDownloadActivity.this).enqueue(downloadBean);
                         if (!isStarted) {
                             bindViewHolder(nativeDownloadViewHolder, i);
                         }
@@ -274,14 +267,14 @@ public class NativeDownloadActivity extends AppCompatActivity {
                             nativeDownloadViewHolder.mStatusButton.setEnabled(false);
                             return;
                         }
-                        DownloadTask downloadTask = DownloadImpl.getInstance().pause(downloadBean.getUrl());
+                        DownloadTask downloadTask = DownloadImpl.getInstance(NativeDownloadActivity.this).pause(downloadBean.getUrl());
                         if (downloadTask != null) {
                             nativeDownloadViewHolder.mStatusButton.setText("继续");
                         } else {
                             bindViewHolder(nativeDownloadViewHolder, i);
                         }
                     } else if (downloadBean.getStatus() == DownloadTask.STATUS_PAUSED) {
-                        boolean isStarted = DownloadImpl.getInstance().resume(downloadBean.getUrl());
+                        boolean isStarted = DownloadImpl.getInstance(NativeDownloadActivity.this).resume(downloadBean.getUrl());
                         nativeDownloadViewHolder.mStatusButton.setText("等待中...");
                         nativeDownloadViewHolder.mStatusButton.setEnabled(false);
                         if (!isStarted) {
@@ -303,7 +296,7 @@ public class NativeDownloadActivity extends AppCompatActivity {
                     }
 //                    nativeDownloadViewHolder.mStatusButton.setText("暂停");
 //                    nativeDownloadViewHolder.mStatusButton.setEnabled(true);
-                    Log.i(TAG, " isRunning:" + DownloadImpl.getInstance().isRunning(url));
+                    Log.i(TAG, " isRunning:" + DownloadImpl.getInstance(NativeDownloadActivity.this).isRunning(url));
                 }
 
                 @MainThread //回调到主线程，添加该注释
@@ -330,7 +323,7 @@ public class NativeDownloadActivity extends AppCompatActivity {
                         Log.e(TAG, "item recycle");
                         return super.onResult(throwable, uri, url, extra);
                     }
-                    Log.i(TAG, "onResult isSuccess:" + (throwable == null) + " url:" + url + " Thread:" + Thread.currentThread().getName() + " uri:" + uri.toString() + " isPaused:" + DownloadImpl.getInstance().isPaused(url));
+                    Log.i(TAG, "onResult isSuccess:" + (throwable == null) + " url:" + url + " Thread:" + Thread.currentThread().getName() + " uri:" + uri.toString() + " isPaused:" + DownloadImpl.getInstance(NativeDownloadActivity.this).isPaused(url));
                     nativeDownloadViewHolder.mStatusButton.setEnabled(false);
                     if (throwable == null) {
                         nativeDownloadViewHolder.mStatusButton.setText("已完成");
@@ -343,7 +336,7 @@ public class NativeDownloadActivity extends AppCompatActivity {
                             nativeDownloadViewHolder.mStatusButton.setText("出错");
                             nativeDownloadViewHolder.mStatusButton.setEnabled(false);
                         }
-                        Toast.makeText(NativeDownloadActivity.this, downloadException.getMsg(), 1).show();
+                        Toast.makeText(NativeDownloadActivity.this, downloadException.getMsg(), Toast.LENGTH_SHORT).show();
                     }
                     return super.onResult(throwable, uri, url, extra);
                 }
@@ -662,6 +655,6 @@ public class NativeDownloadActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        DownloadImpl.getInstance().cancelAll();
+        DownloadImpl.getInstance(NativeDownloadActivity.this).cancelAll();
     }
 }
